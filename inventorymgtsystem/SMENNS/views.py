@@ -5,6 +5,9 @@ from django.contrib import admin
 from django import forms
 import json
 
+def index(request):
+    return JsonResponse({"Data": "Hello World"})
+
 def gold_calculator(request):
     if request.method == 'POST':
         weight_grams = float(request.POST.get('weight-grams'))
