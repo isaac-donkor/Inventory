@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponse, JsonResponse
-from inventorymgtsystem.models import InvoiceItem
+from .models import InvoiceItem
 from django.contrib import admin
 from django import forms
 import json
