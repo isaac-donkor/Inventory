@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponse, JsonResponse
+from django.template import loader
 from .models import InvoiceItem
 from django.contrib import admin
 from django import forms
+from django.core.mail import EmailMessage
+from django.views.decorators.csrf import csrf_exempt
 import json
 
-def index(request):
-    return JsonResponse({"Data": "Hello World"})
+def smenns(request):
+    template=loader.get_template('gold_calculator.html')
+    return HttpResponse(template.render())
 
 def gold_calculator(request):
     if request.method == 'POST':
@@ -37,10 +41,6 @@ def gold_calculator(request):
             return render(request, 'gold_calculator.html', {'current_calculation': current_calculation})
 
 
-from django.core.mail import EmailMessage
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-import json
 
 def send_email(request):
     if request.method == 'POST':

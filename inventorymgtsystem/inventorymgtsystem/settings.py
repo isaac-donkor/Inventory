@@ -8,9 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1^%%%((%iqy@#^%=(k!fa8$)xhvk=7iv4!6vb$go-8rh0=haaa'
 
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 
 INSTALLED_APPS = [
@@ -38,7 +38,7 @@ ROOT_URLCONF = 'inventorymgtsystem.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'SMENNS' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
