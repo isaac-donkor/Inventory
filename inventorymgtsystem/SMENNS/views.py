@@ -38,7 +38,12 @@ def gold_calculator(request):
                 karat=current_calculation['karat'],
                 amount_gold=current_calculation['amount_gold']
             )
-            return render(request, 'gold_calculator.html', {'current_calculation': current_calculation})
+
+    if request.method == "GET":
+            
+            return render(request, 'gold_calculator.html', 
+                        #   {'current_calculation': current_calculation}
+                          )
 
 
 

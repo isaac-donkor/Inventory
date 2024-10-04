@@ -8,13 +8,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1^%%%((%iqy@#^%=(k!fa8$)xhvk=7iv4!6vb$go-8rh0=haaa'
 
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 
 INSTALLED_APPS = [
-    'SMENNS.apps.SMENNSConfig',
+    'SMENNS.apps.SMENNSConfig', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
