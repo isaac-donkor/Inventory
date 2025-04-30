@@ -17,7 +17,6 @@ def gold_calculator(request):
         weight_grams = float(request.POST.get('weight-grams'))
         price_gold = float(request.POST.get('price-gold'))
         volume = float(request.POST.get('volume'))
-
         weight_pounds = weight_grams / 7.75
         density = weight_pounds / volume
         karat = (density - 10.51) * 52.838 / density

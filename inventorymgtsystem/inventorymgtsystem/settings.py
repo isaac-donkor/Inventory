@@ -5,6 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
+
 SECRET_KEY = 'django-insecure-1^%%%((%iqy@#^%=(k!fa8$)xhvk=7iv4!6vb$go-8rh0=haaa'
 
 
@@ -33,7 +34,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'inventorymgtsystem.urls'
+ROOT_URLCONF = 'SMENNS.urls'
 
 TEMPLATES = [
     {
@@ -98,4 +99,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'justinkwakye50@gmail.com'
 EMAIL_HOST_PASSWORD = 'your-email-password'
-FILE_UPLOAD_TEMP_DIR = './uploads'
+#FILE_UPLOAD_TEMP_DIR = './uploads'
