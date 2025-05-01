@@ -135,106 +135,150 @@
     </div>
 
     <script>
+        let itemCount = 0;
+        let totalAmount = 0;
+        let selectedRow = null;
+
         document.getElementById('gold-calculator-form').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const formData = new FormData(this);
+            // Get input values
+            const weightGrams = parseFloat(document.getElementById('weight-grams').value);
+            const priceGold = parseFloat(document.getElementById('price-gold').value);
+            const volume = parseFloat(document.getElementById('volume').value);
 
-            fetch('', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('pounds-result').textContent = `Weight in Pounds: ${data.weight_pounds.toFixed(2)} lb`;
-                document.getElementById('density-result').textContent = `Density: ${(data.weight_pounds / volume).toFixed(2)} g/cm³`;
-                document.getElementById('karat-result').textContent = `Purity/Karat: ${data.karat.toFixed(2)} kt`;
-                document.getElementById('amount-result').textContent = `Amount of Gold: GHS${data.amount_gold.toFixed(2)}`;
-            });
+            // Calculate weight in pounds
+            const weightPounds = weightGrams / 7.75;
+
+            // Calculate density
+            const density = weightPounds / volume;
+
+            // Calculate karat (purity)
+            const karat = (density - 10.51) * 52.838 / density;
+
+            // Calculate amount of gold
+            const amountGold = (karat / 23) * priceGold * weightPounds;
+
+            // Display results
+            document.getElementById('pounds-result').textContent = `Weight in Pounds: ${weightPounds.toFixed(2)} lb`;
+            document.getElementById('density-result').textContent = `Density: ${density.toFixed(2)} g/cm³`;
+            document.getElementById('karat-result').textContent = `Purity/Karat: ${karat.toFixed(2)} kt`;
+            document.getElementById('amount-result').textContent = `Amount of Gold: GHS${amountGold.toFixed(2)}`;
+
+            // Store calculated values in global variables for later use in invoice
+            window.currentCalculation = {
+                item: `Item ${++itemCount}`,
+                weightPounds: weightPounds.toFixed(2),
+                karat: karat.toFixed(2),
+                amountGold: amountGold.toFixed(2)
+            };
         });
+
         document.getElementById('add-item-btn').addEventListener('click', function() {
-        fetch('', {
-            method: 'POST',
-            body: new URLSearchParams({
-                'weight-pounds': document.getElementById('weight-grams').value / 7.75,
-                'karat': (document.getElementById('weight-grams').value / 7.75) / document.getElementById('volume').value,
-                'amount-gold': document.getElementById('price-gold').value * (document.getElementById('weight-grams').value / 7.75)
-            }).toString(),
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/x-www-form-urlencoded'
+            if (window.currentCalculation) {
+                const invoiceTableBody = document.getElementById('invoice-table').querySelector('tbody');
+                const newRow = document.createElement('tr');
+
+                newRow.innerHTML = `
+                    <td>${window.currentCalculation.item}</td>
+                    <td>${window.currentCalculation.weightPounds} lb</td>
+                    <td>${window.currentCalculation.karat} kt</td>
+                    <td>GHS${window.currentCalculation.amountGold}</td>
+                `;
+
+                // Add click event to the new row
+                newRow.addEventListener('click', function() {
+                    if (selectedRow) {
+                        selectedRow.classList.remove('selected-row');
+                    }
+                    selectedRow = this;
+                    selectedRow.classList.add('selected-row');
+                    document.getElementById('delete-item-btn').disabled = false;
+                });
+
+                invoiceTableBody.appendChild(newRow);
+
+                // Update total amount
+                totalAmount += parseFloat(window.currentCalculation.amountGold);
+                document.getElementById('total-amount').textContent = `GHS${totalAmount.toFixed(2)}`;
+
+                // Send data to Google Sheets
+                fetch('<YOUR_WEB_APP_URL>', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(window.currentCalculation)
+                }).then(response => {
+                    console.log('Data sent to Google Sheets');
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const invoiceTableBody = document.getElementById('invoice-table').querySelector('tbody');
-            const newRow = document.createElement('tr');
-
-            newRow.innerHTML = `
-                <td>${data.item}</td>
-                <td>${data.weight_pounds} lb</td>
-                <td>${data.karat} kt</td>
-                <td>GHS${data.amount_gold}</td>
-            `;
-
-            invoiceTableBody.appendChild(newRow);
         });
-    });
 
-    function printInvoice() {
-        const printWindow = window.open('', '_blank');
-        const invoiceContent = document.getElementById('invoice-table').outerHTML;
-        printWindow.document.write(`
-            <html>
-            <head
-
->
-                <title>Print Invoice</title>
-                <style>
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                    }
-                    th, td {
-                        border: 1px solid #ccc;
-                        padding: 10px;
-                        text-align: left;
-                    }
-                    th {
-                        background-color: #007bff;
-                        color: white;
-                    }
-                    .total-row {
-                        font-weight: bold;
-                    }
-                </style>
-            </head>
-            <body>
-                ${invoiceContent}
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-        printWindow.close();
-    }
-
-    function sendEmail() {
-        const invoiceContent = document.getElementById('invoice-table').innerText;
-        fetch('/send-email/', {
-            method: 'POST',
-            body: JSON.stringify({ content: invoiceContent }),
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/json'
+        document.getElementById('delete-item-btn').addEventListener('click', function() {
+            if (selectedRow) {
+                const amountGold = parseFloat(selectedRow.cells[3].textContent.replace('GHS', ''));
+                totalAmount -= amountGold;
+                document.getElementById('total-amount').textContent = `GHS${totalAmount.toFixed(2)}`;
+                selectedRow.remove();
+                selectedRow = null;
+                document.getElementById('delete-item-btn').disabled = true;
             }
-        })
-        .then(response => response.json())
-        .then(data => alert('Email sent successfully!'));
-    }
+        });
+
+        function printInvoice() {
+            const printWindow = window.open('', '_blank');
+            const invoiceContent = document.getElementById('invoice-table').outerHTML;
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Invoice</title>
+                    <style>
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        th, td {
+                            border: 1px solid #ccc;
+                            padding: 10px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #007bff;
+                            color: white;
+                        }
+                        .total-row {
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${invoiceContent}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+            printWindow.close();
+        }
+
+        function sendEmail() {
+            const invoiceTableBody = document.getElementById('invoice-table').querySelector('tbody');
+            let invoiceContent = '';
+            for (let row of invoiceTableBody.rows) {
+                for (let cell of row.cells) {
+                    invoiceContent += `${cell.textContent}, `;
+                }
+                invoiceContent += '\n';
+            }
+            const subject = 'Invoice for Gold Purchase';
+            const body = encodeURIComponent(`Dear Customer,\n\nPlease find your invoice details below:\n\n${invoiceContent}\nTotal Amount: GHS${totalAmount.toFixed(2)}\n\nThank you for your purchase.`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
     </script>
+
 </body>
 </html>

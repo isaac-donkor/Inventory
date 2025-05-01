@@ -52,7 +52,7 @@ def send_email(request):
         email = EmailMessage(
             subject='Invoice',
             body=f'Here is your invoice:\n\n{data["content"]}',
-            to=['recipient@example.com']
+            to=['justinkwakye50@gmail.com']
         )
         email.send()
         return JsonResponse({'status': 'success'})
