@@ -228,7 +228,7 @@
                 document.getElementById('delete-item-btn').disabled = true;
             }
         });
-
+//Print button function
         function printInvoice() {
             const printWindow = window.open('', '_blank');
             const invoiceContent = document.getElementById('invoice-table').outerHTML;
@@ -264,7 +264,7 @@
             printWindow.print();
             printWindow.close();
         }
-
+//Send email button 
         function sendEmail() {
             const invoiceTableBody = document.getElementById('invoice-table').querySelector('tbody');
             let invoiceContent = '';
