@@ -44,7 +44,10 @@ def gold_calculator(request):
                         #   {'current_calculation': current_calculation}
                           )
 
-def 
+def sales_view(request):
+     template=loader.get_template('sales_view.html')
+     objects=InvoiceItem.objects.all()
+     return render(request,'sales_view.html',{'objects':objects})
 
 def send_email(request):
     if request.method == 'POST':

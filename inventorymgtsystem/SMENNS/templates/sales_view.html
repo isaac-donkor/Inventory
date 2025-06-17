@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales</title>
+</head>
+<body>
+    <h1>Sales</h1>
+    <ul>
+        {% for object in objects %}
+            <li>
+                <h2>{{ object.item_name }}</h2>
+                <p>{{ object.weight_pounds }}</p>
+                <p>{{ object.karat }}</p>
+                <p>{{ object.amount_gold}}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
