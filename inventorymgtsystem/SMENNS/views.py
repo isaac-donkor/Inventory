@@ -44,7 +44,7 @@ def gold_calculator(request):
                         #   {'current_calculation': current_calculation}
                           )
 
-
+def 
 
 def send_email(request):
     if request.method == 'POST':

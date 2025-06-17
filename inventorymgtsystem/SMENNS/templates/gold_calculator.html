@@ -202,19 +202,8 @@
                 totalAmount += parseFloat(window.currentCalculation.amountGold);
                 document.getElementById('total-amount').textContent = `GHS${totalAmount.toFixed(2)}`;
 
-                // Send data to Google Sheets
-                fetch('<YOUR_WEB_APP_URL>', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(window.currentCalculation)
-                }).then(response => {
-                    console.log('Data sent to Google Sheets');
-                }).catch(error => {
-                    console.error('Error:', error);
-                });
+                
+                
             }
         });
 
